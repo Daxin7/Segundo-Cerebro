@@ -2,7 +2,7 @@
 
 ![](images/Portada.png)
 
-> [!IMPORTANT] ❗ Degustación
+> [!IMPORTANT]
 > Sistema de organización personal construido con herramientas 100% open source,
 > diseñado para estudiantes que quieren dejar de perder apuntes y empezar
 > a estudiar con inteligencia.
@@ -39,7 +39,9 @@ Quería un sistema que:
 
 ## Stack completo
 
-> [!WARNING] ⚠️ Modelos locales
+> [!WARNING]
+> ⚠️ Modelos Locales
+> 
 > Los modelos locales como  ***Qwen2.5-Coder 7B*** y  ***Gemma 4 E2B*** se demoran un poco en responder ya que ocupan los recursos de nuestra máquina, siendo así, es recomedable usar estos modelos en momentos que queramos que nuestra informacion se maneje de maner privada o no tengamos acceso a Internet.
 
 | Herramienta                     | Rol                                          | Por qué esta                                        |
@@ -75,7 +77,9 @@ SegundoCerebro/
 
 ## Skills locales incluidas
 
-> [!TIP] 💡 Ubicación
+> [!TIP]
+> 💡 Skills
+> 
 > Poner la carpeta de skills proporcionada dentro de la carpeta **.opencode**
 >
 > ```bash
@@ -231,11 +235,55 @@ En el path `.config\opencode\opencode.json`
 }
 ```
 
+### 9. Plantilla Template general para apuntes
+```bash
+<%*
+const materia = await tp.system.prompt("¿De qué materia son los apuntes?");
+const tema = await tp.system.prompt("¿Cuál es el tema o título de esta nota?");
+const semana = await tp.system.prompt("¿A qué semana o unidad corresponde? (ej: Semana-01)");
+const fecha = tp.date.now("YYYY-MM-DD");
+
+const carpeta = `01-Materias/${materia}/${semana}`;
+const nombreArchivo = `${fecha}-${tema.replace(/ /g, "-")}`;
+
+await tp.file.move(`${carpeta}/${nombreArchivo}`);
+-%>
+---
+materia: <% materia %>
+tema: <% tema %>
+semana: <% semana %>
+fecha: <% fecha %>
+estado: borrador
+---
+
+# <% tema %>
+**Materia:** <% materia %>
+**Fecha:** <% fecha %>
+
+---
+
+## Apuntes
+
+(escribe aquí)
+
+---
+
+## Conceptos clave
+
+-
+
+---
+
+## Dudas
+```
+
 ---
 
 ## Flujo de trabajo típico
 
 > [!TIP]
+> 💡
+> 
 > 1. Tomas apuntes a mano en clase
 > 2. Esa foto la conviertes a md con una IA de Internet.
 > 3. Colocas el archivo md generado en la carpeta de la materia que corresponda de los archivos.
@@ -246,7 +294,9 @@ En el path `.config\opencode\opencode.json`
 
 Para poder generar conexiones tus apuntes, con el modo Build de open code le puedes dar los siguientes Prompts modelo.
 
-> [!TIP] 💡 Prompt para generar conexiones entre todo el vault
+> [!TIP]
+> 💡 Prompt para generar conexiones entre todo el vault
+> 
 > ```bash
 > Analiza todos los archivos .md de @01-Materias/
 > y genera conexiones entre notas de todas las materias usando [[links]] de Obsidian.
@@ -261,7 +311,9 @@ Para poder generar conexiones tus apuntes, con el modo Build de open code le pue
 > - Confírmame el resumen de links generados por materia
 > ```
 
-> [!TIP] 💡 Prompt para generar conexiones en una materia o carpeta
+> [!TIP]
+> 💡 Prompt para generar conexiones en una materia o carpeta
+> 
 > ```bash
 > Analiza todos los archivos .md de @01-Materias/[materia]/
 > y genera conexiones entre notas relacionadas usando [[links]] de Obsidian.
@@ -281,7 +333,9 @@ Para poder generar conexiones tus apuntes, con el modo Build de open code le pue
 
 ## Prompts Modelo para usar las skills
 
-> [!TIP] 💡 Prompt para preparacion-examen
+> [!TIP]
+> 💡 Prompt para preparacion-examen
+> 
 > ```bash
 > Basándote en @01-Materias/[materia]/[semana]/
 > prepárame para el examen:
@@ -290,7 +344,9 @@ Para poder generar conexiones tus apuntes, con el modo Build de open code le pue
 >   esperando mi respuesta antes de pasar a la siguiente
 > ```
 
-> [!TIP] 💡 Prompt para generar-flashcards
+> [!TIP]
+> 💡 Prompt para generar-flashcards
+> 
 > ```bash
 > Basándote en @01-Materias/[materia]/[semana]/[archivo].md
 > genera las flashcards de estos apuntes en formato compatible
@@ -298,7 +354,9 @@ Para poder generar conexiones tus apuntes, con el modo Build de open code le pue
 > en la misma carpeta
 > ```
 
-> [!TIP] 💡 Prompt para glosario-materia
+> [!TIP]
+> 💡 Prompt para glosario-materia
+> 
 > ```bash
 > Basándote en todos los archivos de @01-Materias/[materia]/
 > extrae todos los términos técnicos y definiciones,
@@ -307,7 +365,9 @@ Para poder generar conexiones tus apuntes, con el modo Build de open code le pue
 > Si ya existe un Glosario.md, actualízalo sin borrar lo anterior
 > ```
 
-> [!TIP] 💡 Prompt para cronograma-examen
+> [!TIP]
+> 💡 Prompt para cronograma-examen
+> 
 > ```bash
 > Tengo examen de [materia] el [fecha].
 > Basándote en @01-Materias/[materia]/
@@ -317,7 +377,9 @@ Para poder generar conexiones tus apuntes, con el modo Build de open code le pue
 > Guárdalo como Cronograma-Examen-[fecha].md en la carpeta de la materia
 > ```
 
-> [!TIP] 💡 Prompt para resumen-sesion
+> [!TIP]
+> 💡 Prompt para resumen-sesion
+> 
 > ```bash
 > Genera un resumen de esta conversación en formato Markdown
 > con las secciones: Contexto, Lo que hicimos, Pendiente
@@ -326,7 +388,9 @@ Para poder generar conexiones tus apuntes, con el modo Build de open code le pue
 > Dale un titulo al archivo y añade su fecha, por ejemplo: POO-en-Python-15/08/2026.md
 > ```
 
-> [!TIP] 💡 Prompt para revision-bandeja
+> [!TIP]
+> 💡 Prompt para revision-bandeja
+> 
 > ```bash
 > Lee todos los archivos en @05-Bandeja-Entrada/
 > y clasifícalos en su carpeta correcta.
@@ -336,7 +400,9 @@ Para poder generar conexiones tus apuntes, con el modo Build de open code le pue
 > Confírmame cada movimiento con ruta origen y destino
 > ```
 
-> [!TIP] 💡 Prompt para reporte-semanal
+> [!TIP]
+> 💡 Prompt para reporte-semanal
+> 
 > ```bash
 > Genera el reporte de esta semana revisando todo el vault:
 > - Notas creadas esta semana por carpeta
@@ -347,7 +413,9 @@ Para poder generar conexiones tus apuntes, con el modo Build de open code le pue
 > Guarda el reporte como Reporte-[fecha de hoy].md en @02-Personal/
 > ```
 
-> [!TIP] 💡 Prompt para revisar-todos
+> [!TIP]
+> 💡 Prompt para revisar-todos
+> 
 > ```bash
 > Lee todos los archivos de @03-To-Dos/
 > y muéstrame un resumen priorizado de mis tareas:
@@ -357,7 +425,9 @@ Para poder generar conexiones tus apuntes, con el modo Build de open code le pue
 > Omite las tareas ya completadas
 > ```
 
-> [!TIP] 💡 Prompt para cerrar-semana
+> [!TIP]
+> 💡 Prompt para cerrar-semana
+> 
 > ```bash
 > Vamos a cerrar la semana.
 > Revisa el vault para saber qué hice esta semana,
@@ -369,7 +439,9 @@ Para poder generar conexiones tus apuntes, con el modo Build de open code le pue
 > Al final genera la nota de cierre con fecha de hoy y guárdala en @02-Personal/
 > ```
 
-> [!TIP] 💡 Prompt para exportar-notas
+> [!TIP]
+> 💡 Prompt para exportar-notas
+> 
 > ```bash
 > Une todos los archivos .md de @01-Materias/[materia]/
 > en un solo documento limpio ordenado cronológicamente.
@@ -377,7 +449,9 @@ Para poder generar conexiones tus apuntes, con el modo Build de open code le pue
 > en la misma carpeta de la materia
 > ```
 
-> [!TIP] 💡 Prompt para modo-estudio (Modo tutor - una sola nota)
+> [!TIP]
+> 💡 Prompt para modo-estudio (Modo tutor - una sola nota)
+> 
 > ```bash
 > Actúa como mi tutor de @01-Materias/[materia]/[semana]/[archivo].md
 >
@@ -391,7 +465,9 @@ Para poder generar conexiones tus apuntes, con el modo Build de open code le pue
 > y luego hazme la primera pregunta
 > ```
 
-> [!TIP] 💡 Prompt para modo-estudio (Modo tutor - semana completa)
+> [!TIP]
+> 💡 Prompt para modo-estudio (Modo tutor - semana completa)
+> 
 > ```bash
 > Actúa como mi tutor de toda la carpeta @01-Materias/[materia]/[semana]/
 >
