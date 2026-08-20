@@ -341,7 +341,6 @@ Para poder generar conexiones tus apuntes, con el modo Build de open code le pue
 > prepárame para el examen:
 > - Dame un resumen de todos los temas cubiertos
 > - Luego hazme un cuestionario.md de preguntas de práctica tipo examen, este documento lo debes en la misma carpeta.
->   esperando mi respuesta antes de pasar a la siguiente
 > ```
 
 > [!TIP]
