@@ -7,6 +7,9 @@
 > diseñado para estudiantes que quieren dejar de perder apuntes y empezar
 > a estudiar con inteligencia.
 
+## Link al video tutorial
+[Video tutorial-Yotube](https://youtu.be/D0uIKCGPfRo)
+
 ## ¿Qué es esto?
 
 Un sistema de "segundo cerebro" que conecta **Obsidian** (tu base de conocimiento)
