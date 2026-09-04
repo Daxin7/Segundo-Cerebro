@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Segundo Cerebro | Explorador</title>
+    <!-- Cargamos la librería para convertir Markdown a HTML -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        /* Variables por defecto (Modo Oscuro) */
+        :root {
+            --bg-color: #1e1e2e;
+            --sidebar-bg: #181825;
+            --text-main: #cdd6f4;
+            --text-muted: #a6adc8;
+            --accent: #cba6f7;
+            --accent-hover: #b4befe;
+            --card-bg: rgba(24, 24, 37, 0.85);
+            --border-color: #313244;
+            --node-color: 203, 166, 247; /* RGB para el canvas */
+        }
+        
+        /* Variables para Modo Claro */
+        body.light-mode {
+            --bg-color: #eff1f5;
+            --sidebar-bg: #e6e9ef;
+            --text-main: #4c4f69;
+            --text-muted: #6c6f85;
+            --accent: #8839ef;
+            --accent-hover: #7287fd;
+            --card-bg: rgba(230, 233, 239, 0.85);
+            --border-color: #bcc0cc;
+            --node-color: 136, 57, 239; /* RGB para el canvas en claro */
+        }
+        
+        body { 
+            margin: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg-color); 
+            color: var(--text-main); 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            transition: background 0.3s, color 0.3s;
+        }
+        
+        #canvas-container { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            z-index: 0; opacity: 0.4; pointer-events: none; 
+        }
+        
+        .sidebar { 
+            width: 280px; background: var(--sidebar-bg); padding: 25px 20px; 
+            z-index: 1; border-right: 1px solid var(--border-color); 
+            display: flex; flex-direction: column; 
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            transition: background 0.3s, border-color 0.3s;
+        }
+        
+        .sidebar h2 { 
+            color: var(--accent); font-size: 1.3rem; margin-top: 0;
+            border-bottom: 1px solid var(--border-color); padding-bottom: 15px;
+        }
+        
+        .file-tree { list-style: none; padding: 0; margin-top: 10px; }
+        .file-tree li { 
+            padding: 10px 12px; cursor: pointer; border-radius: 6px; 
+            transition: all 0.2s; color: var(--text-muted); font-size: 0.95rem; margin-bottom: 5px;
+        }
+        .file-tree li:hover { background: var(--border-color); color: var(--text-main); transform: translateX(5px); }
+        .file-tree li::before { content: '📄 '; }
+        
+        .main-content { 
+            flex: 1; padding: 50px; z-index: 1; overflow-y: auto; 
+            backdrop-filter: blur(3px); position: relative;
+        }
+        
+        /* Botón del Tema */
+        .theme-toggle {
+            position: absolute; top: 30px; right: 50px;
+            background: var(--sidebar-bg); border: 1px solid var(--border-color);
+            color: var(--text-main); padding: 10px 15px; border-radius: 8px;
+            cursor: pointer; font-weight: bold; transition: all 0.2s;
+        }
+        .theme-toggle:hover { background: var(--border-color); }
+
+        .header { border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 30px; margin-top: 30px; }
+        .header h1 { margin: 0; font-size: 2.2rem; }
+        
+        .typewriter { 
+            font-family: 'Courier New', Courier, monospace; font-size: 1.1rem; 
+            color: var(--accent-hover); min-height: 1.5rem; margin-bottom: 20px;
+        }
+        
+        .content-card { 
+            background: var(--card-bg); padding: 30px; border-radius: 12px; 
+            border: 1px solid var(--border-color); box-shadow: 0 8px 15px rgba(0,0,0,0.15); 
+            line-height: 1.7; font-size: 1.05rem; transition: background 0.3s;
+        }
+        
+        /* Estilos para el Markdown convertido */
+        .content-card img { max-width: 100%; border-radius: 8px; }
+        .content-card code { background: rgba(0,0,0,0.2); padding: 3px 6px; border-radius: 4px; font-family: monospace; color: var(--accent); }
+        .content-card pre { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; overflow-x: auto; }
+        .content-card blockquote { border-left: 4px solid var(--accent); margin: 0; padding-left: 15px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <canvas id="graph-canvas" id="canvas-container"></canvas>
+
+    <div class="sidebar">
+        <h2>🧠 Mi Segundo Cerebro</h2>
+        <ul class="file-tree">
+            <!-- AQUÍ PONES LOS NOMBRES EXACTOS DE TUS ARCHIVOS .md -->
+            <li onclick="loadMarkdown('README.md', 'Inicio', '> Inicializando sistema...')">README.md</li>
+            <li onclick="loadMarkdown('Inteligencia_Artificial.md', 'Inteligencia Artificial', '> Cargando LLMs...')">Inteligencia_Artificial.md</li>
+            <li onclick="loadMarkdown('Data_Science.md', 'Ciencia de Datos', '> import pandas as pd...')">Data_Science.md</li>
+            <li onclick="loadMarkdown('Linux_Emacs.md', 'Entornos Linux', '> sudo apt update...')">Linux_Emacs.md</li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <button class="theme-toggle" id="theme-toggle">☀️ Modo Claro</button>
+        
+        <div class="header">
+            <h1 id="page-title">Bienvenido a mi mente digital</h1>
+        </div>
+        <div class="content-card">
+            <div id="typewriter" class="typewriter"></div>
+            <div id="page-body" style="margin-top: 10px;">
+                <p>Haz clic en los archivos de la izquierda para cargar su contenido real desde GitHub.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Lógica del Botón Claro/Oscuro ---
+        const toggleBtn = document.getElementById('theme-toggle');
+        toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            toggleBtn.innerText = isLight ? '🌙 Modo Oscuro' : '☀️ Modo Claro';
+        });
+
+        // --- Lógica de Máquina de Escribir ---
+        let typingInterval;
+        function typeWriter(text, elementId, speed = 40) {
+            clearInterval(typingInterval);
+            const el = document.getElementById(elementId);
+            el.innerHTML = '';
+            let i = 0;
+            typingInterval = setInterval(() => {
+                if (i < text.length) { el.innerHTML += text.charAt(i); i++; } 
+                else { clearInterval(typingInterval); }
+            }, speed);
+        }
+
+        // --- Lógica para leer archivos Markdown (Fetch) ---
+        async function loadMarkdown(filename, titleText, typeText) {
+            document.getElementById('page-title').innerText = titleText;
+            typeWriter(typeText, 'typewriter');
+            
+            const contentDiv = document.getElementById('page-body');
+            contentDiv.innerHTML = '<p><i>Cargando archivo...</i></p>';
+
+            try {
+                // Obtenemos el archivo real del repositorio
+                const response = await fetch(filename);
+                if (!response.ok) throw new Error("Error HTTP " + response.status);
+                
+                const markdownText = await response.text();
+                // Convertimos el Markdown a HTML y lo inyectamos
+                contentDiv.innerHTML = marked.parse(markdownText);
+            } catch (error) {
+                contentDiv.innerHTML = `<p style="color: #f38ba8;"><b>Error:</b> No se pudo cargar <code>${filename}</code>. Asegúrate de que este archivo exista en tu repositorio con ese nombre exacto, incluyendo mayúsculas.</p>`;
+            }
+        }
+
+        // --- Sistema de Partículas (Graph View) adaptativo ---
+        const canvas = document.getElementById('graph-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let particles = [];
+        const numParticles = 80;
+
+        function getNodeColor() {
+            // Lee el color RGB de las variables CSS para que cambie según el tema
+            return getComputedStyle(document.body).getPropertyValue('--node-color').trim() || '203, 166, 247';
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.8;
+                this.vy = (Math.random() - 0.5) * 0.8;
+                this.radius = Math.random() * 2 + 1;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+            draw(color) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgb(${color})`;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < numParticles; i++) particles.push(new Particle());
+
+        function animateGraph() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const currentColor = getNodeColor();
+            
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw(currentColor);
+                
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(${currentColor}, ${0.7 - dist/120})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateGraph);
+        }
+        animateGraph();
+    </script>
+</body>
+</html>
