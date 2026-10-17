@@ -11,6 +11,9 @@ Tres recursos pedidos por Carlos antes de publicar el post 1 de LinkedIn:
 
 Transcripciones limpias: `%TEMP%\opencode\videos\txt\`.
 
+> **Lote 2 (mismo día, pedidos por Carlos)** → [`notas-videos-2026-10-17-lote2.md`](notas-videos-2026-10-17-lote2.md)
+> (live 8 h RAG → [`notas-rag-live-2026-10-17.md`](notas-rag-live-2026-10-17.md); RAG con embeddings ES; ideas de trading para el fondo)
+
 ---
 
 # 1. Video 1 — Plan de 30 días (Agustín Medina)
